@@ -5,11 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import platform.Foundation.*
 
-actual fun createLocalProvider(): LocaleProvider {
-    return LocaleProviderOS()
-}
-
-class LocaleProviderOS: LocaleProvider {
+class IOSLocaleProvider: LocaleProvider {
     override fun getCurrentLocale(): LocaleInfo =
         LocaleInfo(
             NSLocale.currentLocale.languageCode
@@ -22,9 +18,17 @@ class LocaleProviderOS: LocaleProvider {
                 null,
                 NSOperationQueue.mainQueue
             ) { _ -> trySend(getCurrentLocale()) }
+            send(getCurrentLocale())
             awaitClose {
                 NSNotificationCenter.defaultCenter.removeObserver(observer)
             }
         }
+    }
+}
+
+public object NanitLocalizationOS {
+    fun initialize() {
+        val localeProvider = IOSLocaleProvider()
+        NanitLocalization.initialize(LocalizationManagerConfig(localeProvider))
     }
 }
