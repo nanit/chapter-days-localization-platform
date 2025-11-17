@@ -1,0 +1,95 @@
+{
+  "locale": "fr",
+  "values": [
+    {
+      "key": "app_name",
+      "value": "Plateforme de Localisation",
+      "description": "Nom de l'application"
+    },
+    {
+      "key": "welcome_message",
+      "value": "Bienvenue dans notre application!",
+      "description": "Message de bienvenue principal"
+    },
+    {
+      "key": "login_button",
+      "value": "Se Connecter"
+    },
+    {
+      "key": "logout_button",
+      "value": "Se Déconnecter"
+    },
+    {
+      "key": "settings_title",
+      "value": "Paramètres"
+    },
+    {
+      "key": "save_button",
+      "value": "Enregistrer"
+    },
+    {
+      "key": "cancel_button",
+      "value": "Annuler"
+    },
+    {
+      "key": "error_network",
+      "value": "Erreur réseau. Veuillez réessayer.",
+      "description": "Message d'erreur réseau"
+    }
+  ],
+  "arrays": [
+    {
+      "key": "days_of_week",
+      "items": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
+      "description": "Jours de la semaine"
+    },
+    {
+      "key": "months",
+      "items": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
+      "description": "Mois de l'année"
+    },
+    {
+      "key": "navigation_items",
+      "items": ["Accueil", "Profil", "Paramètres", "Aide"],
+      "description": "Éléments du menu de navigation principal"
+    }
+  ],
+  "plurals": [
+    {
+      "key": "items_in_cart",
+      "quantities": {
+        "zero": "Aucun article dans le panier",
+        "one": "1 article dans le panier",
+        "other": "%d articles dans le panier"
+      },
+      "description": "Nombre d'articles dans le panier"
+    },
+    {
+      "key": "unread_messages",
+      "quantities": {
+        "zero": "Aucun message non lu",
+        "one": "1 message non lu",
+        "other": "%d messages non lus"
+      },
+      "description": "Nombre de messages non lus"
+    },
+    {
+      "key": "days_remaining",
+      "quantities": {
+        "zero": "Aucun jour restant",
+        "one": "1 jour restant",
+        "two": "2 jours restants",
+        "other": "%d jours restants"
+      },
+      "description": "Jours restants dans l'essai"
+    },
+    {
+      "key": "files_selected",
+      "quantities": {
+        "zero": "Aucun fichier sélectionné",
+        "one": "1 fichier sélectionné",
+        "other": "%d fichiers sélectionnés"
+      }
+    }
+  ]
+}
