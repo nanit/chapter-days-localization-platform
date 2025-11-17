@@ -1,0 +1,95 @@
+{
+  "locale": "es",
+  "values": [
+    {
+      "key": "app_name",
+      "value": "Plataforma de Localización",
+      "description": "Nombre de la aplicación"
+    },
+    {
+      "key": "welcome_message",
+      "value": "¡Bienvenido a nuestra aplicación!",
+      "description": "Mensaje de bienvenida principal"
+    },
+    {
+      "key": "login_button",
+      "value": "Iniciar Sesión"
+    },
+    {
+      "key": "logout_button",
+      "value": "Cerrar Sesión"
+    },
+    {
+      "key": "settings_title",
+      "value": "Configuración"
+    },
+    {
+      "key": "save_button",
+      "value": "Guardar"
+    },
+    {
+      "key": "cancel_button",
+      "value": "Cancelar"
+    },
+    {
+      "key": "error_network",
+      "value": "Error de red. Por favor, inténtelo de nuevo.",
+      "description": "Mensaje de error de red"
+    }
+  ],
+  "arrays": [
+    {
+      "key": "days_of_week",
+      "items": ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
+      "description": "Días de la semana"
+    },
+    {
+      "key": "months",
+      "items": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+      "description": "Meses del año"
+    },
+    {
+      "key": "navigation_items",
+      "items": ["Inicio", "Perfil", "Configuración", "Ayuda"],
+      "description": "Elementos del menú de navegación principal"
+    }
+  ],
+  "plurals": [
+    {
+      "key": "items_in_cart",
+      "quantities": {
+        "zero": "No hay artículos en el carrito",
+        "one": "1 artículo en el carrito",
+        "other": "%d artículos en el carrito"
+      },
+      "description": "Número de artículos en el carrito"
+    },
+    {
+      "key": "unread_messages",
+      "quantities": {
+        "zero": "No hay mensajes sin leer",
+        "one": "1 mensaje sin leer",
+        "other": "%d mensajes sin leer"
+      },
+      "description": "Número de mensajes sin leer"
+    },
+    {
+      "key": "days_remaining",
+      "quantities": {
+        "zero": "No quedan días",
+        "one": "Queda 1 día",
+        "two": "Quedan 2 días",
+        "other": "Quedan %d días"
+      },
+      "description": "Días restantes en la prueba"
+    },
+    {
+      "key": "files_selected",
+      "quantities": {
+        "zero": "No hay archivos seleccionados",
+        "one": "1 archivo seleccionado",
+        "other": "%d archivos seleccionados"
+      }
+    }
+  ]
+}
