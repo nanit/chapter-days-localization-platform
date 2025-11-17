@@ -1,8 +1,15 @@
 package com.example.localizationManager
 
+import com.example.localizationManager.api.ApiConfig
+import com.example.localizationManager.api.KtorLocalizationApiClient
+import com.example.localizationManager.api.LocalizationApiClient
+import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -12,6 +19,26 @@ class LocalizationManager(
 
     private val coroutineScope by lazy { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
 
+    // Create API client internally - hidden from platform code
+    private val apiClient: LocalizationApiClient by lazy {
+        val apiConfig = ApiConfig(
+            baseUrl = "base url",
+        )
+        KtorLocalizationApiClient(apiConfig)
+    }
+
+    private val cache = Cache.Builder<String, String>()
+        .maximumCacheSize(config.cacheSize)
+        .build()
+
+    private val _currentLocale = MutableStateFlow(
+        config.localeProvider.getCurrentLocale()
+    )
+    val currentLocale: StateFlow<LocaleInfo> = _currentLocale.asStateFlow()
+
+    private val refreshCallbacks = mutableMapOf<String, () -> Unit>()
+
+
     fun initialize() {
         // Start observing locale changes
         coroutineScope.launch {
@@ -19,9 +46,96 @@ class LocalizationManager(
                 .distinctUntilChanged()
                 .collect { newLocale ->
                     println("New Locale received: $newLocale")
-//                    handleLocaleChange(newLocale)
+                    handleLocaleChange(newLocale)
                 }
         }
 
+        // Load initial strings
+        coroutineScope.launch {
+            loadStringsForCurrentLocale()
+        }
+
     }
+
+    private suspend fun handleLocaleChange(newLocale: LocaleInfo) {
+        if (_currentLocale.value != newLocale) {
+            _currentLocale.value = newLocale
+            cache.invalidateAll()
+            loadStringsForCurrentLocale()
+
+            // Trigger all registered callbacks
+            refreshCallbacks.values.forEach { it.invoke() }
+        }
+    }
+
+    private suspend fun loadStringsForCurrentLocale() {
+        try {
+            // Try to load from storage first
+//            val cachedStrings = config.storage.getStrings(currentLocale.value.languageCode)
+
+//            if (cachedStrings.isNotEmpty()) {
+//                cachedStrings.forEach { (key, value) ->
+//                    cache.put(key, value)
+//                }
+//            }
+
+            // Fetch from API in background
+            fetchAndCacheStrings()
+        } catch (e: Exception) {
+            // Handle error
+            println("Error loading strings: ${e.message}")
+        }
+    }
+
+    private suspend fun fetchAndCacheStrings() {
+        try {
+            val strings = apiClient.fetchStrings(currentLocale.value.languageCode)
+
+            // Save to storage
+//            config.storage.saveStrings(currentLocale.value.languageCode, strings)
+
+            // Update cache
+            strings.forEach { (key, value) ->
+                cache.put(key, value)
+            }
+        } catch (e: Exception) {
+            println("Error fetching strings from API: ${e.message}")
+        }
+    }
+
+    suspend fun getString(key: String): String {
+        return cache.get(key) {
+            // Fallback: try to load from storage
+//            config.storage.getString(currentLocale.value.languageCode, key)
+//                ?: key // Return key as fallback
+            key
+        }
+    }
+
+//    @Composable
+//    fun stringResource(key: String): String {
+//        val locale by currentLocale.collectAsState()
+//        var refreshTrigger by remember { mutableIntStateOf(0) }
+//
+//        DisposableEffect(key) {
+//            val callback = { refreshTrigger++ }
+//            refreshCallbacks[key] = callback
+//
+//            onDispose {
+//                refreshCallbacks.remove(key)
+//            }
+//        }
+//
+//        val value by produceState(
+//            initialValue = key,
+//            key1 = key,
+//            key2 = locale,
+//            key3 = refreshTrigger
+//        ) {
+//            value = getString(key)
+//        }
+//
+//        return value
+//    }
+
 }
