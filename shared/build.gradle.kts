@@ -33,7 +33,7 @@ kotlin {
     // wasmJs {
     //     browser()
     // }
-    
+
     sourceSets {
         commonMain.dependencies {
             // put your Multiplatform dependencies here
@@ -57,6 +57,11 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
+        }
+        androidUnitTest.dependencies {
+            implementation(libs.androidx.core)
+            implementation(libs.androidx.runner)
+            implementation(libs.sqldelight.jvm) // Use JVM driver for unit tests
         }
     }
 }
