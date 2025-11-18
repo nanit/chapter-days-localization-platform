@@ -1,5 +1,6 @@
 [versions]
-agp = "8.10.1"
+agp = "8.11.2"
+arrowBom = "2.2.0"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
@@ -11,19 +12,57 @@ androidx-lifecycle = "2.9.5"
 androidx-testExt = "1.3.0"
 composeMultiplatform = "1.9.1"
 junit = "4.13.2"
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 kotlinx-coroutines = "1.10.2"
 ktor = "3.3.1"
 logback = "1.5.20"
 kotlinStdlib = "2.2.20"
 runner = "1.6.2"
 core = "1.6.1"
-coroutines = "1.7.3"
 cache4k = "0.13.0"
 kotlinx-serialization = "1.8.0"
+kotlinx-datetime = "0.6.1"
+ksp = "2.2.21-2.0.4"
+androidxComposeFoundation = "1.8.0-alpha07"
+koinBom = "4.1.0"
 sqldelight = "2.0.2"
 
 [libraries]
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koinBom" }
+koin-core = { group = "io.insert-koin", name = "koin-core" }
+koin-ktor = { group = "io.insert-koin", name = "koin-ktor" }
+koin-android = { group = "io.insert-koin", name = "koin-android" }
+koin-android-compat = { group = "io.insert-koin", name = "koin-android-compat" }
+koin-android-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
+koin-compose = { group = "io.insert-koin", name = "koin-compose" }
+koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmodel" }
+koin-test = { group = "io.insert-koin", name = "koin-test" }
+
+arrow-bom = { group = "io.arrow-kt", name = "arrow-stack", version.ref = "arrowBom" }
+arrow-annotations = { group = "io.arrow-kt", name = "arrow-annotations" }
+arrow-atomic = { group = "io.arrow-kt", name = "arrow-atomic" }
+arrow-autoclose = { group = "io.arrow-kt", name = "arrow-autoclose" }
+arrow-cache4k = { group = "io.arrow-kt", name = "arrow-cache4k" }
+arrow-collectors = { group = "io.arrow-kt", name = "arrow-collectors" }
+arrow-core = { group = "io.arrow-kt", name = "arrow-core" }
+arrow-functions = { group = "io.arrow-kt", name = "arrow-functions" }
+arrow-core-high-arity = { group = "io.arrow-kt", name = "arrow-core-high-arity" }
+arrow-core-retrofit = { group = "io.arrow-kt", name = "arrow-core-retrofit" }
+arrow-core-serialization = { group = "io.arrow-kt", name = "arrow-core-serialization" }
+arrow-eval = { group = "io.arrow-kt", name = "arrow-eval" }
+arrow-fx-coroutines = { group = "io.arrow-kt", name = "arrow-fx-coroutines" }
+arrow-fx-stm = { group = "io.arrow-kt", name = "arrow-fx-stm" }
+arrow-optics = { group = "io.arrow-kt", name = "arrow-optics" }
+arrow-optics-compose = { group = "io.arrow-kt", name = "arrow-optics-compose" }
+arrow-optics-reflect = { group = "io.arrow-kt", name = "arrow-optics-reflect" }
+arrow-resilience = { group = "io.arrow-kt", name = "arrow-resilience" }
+arrow-suspendapp = { group = "io.arrow-kt", name = "suspendapp", version = "0.4.0" }
+arrow-ksp = { group = "io.arrow-kt", name = "arrow-optics-ksp-plugin", version.ref = "arrowBom" }
+
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "androidxComposeFoundation" }
+androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
+
+
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
@@ -39,10 +78,14 @@ logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 ktor-serverCore = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktor-serverNetty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
 ktor-serverTestHost = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
+ktor-serverContentNegotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+ktor-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-js = { group = "io.ktor", name = "ktor-client-js", version.ref = "ktor" }
+
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
-kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 cache4k = { module = "io.github.reactivecircus.cache4k:cache4k", version.ref = "cache4k" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -57,8 +100,10 @@ sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref 
 sqldelight-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-js = { module = "app.cash.sqldelight:web-worker-driver", version.ref = "sqldelight" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
 [plugins]
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }

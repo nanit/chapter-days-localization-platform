@@ -30,5 +30,8 @@ dependencyResolutionManagement {
 
 include(":composeApp")
 include(":server")
+include(":server:data")
+include(":server:domain")
+include(":server:di")
 include(":shared")
 include(":LocalizationManager")
