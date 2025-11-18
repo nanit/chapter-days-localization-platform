@@ -100,9 +100,7 @@ private fun Application.module() {
                         )
                     }
             }
-        }
 
-        contentType(ContentType.Application.Json) {
             post("/translation") {
                 val incoming = call.receive<IncomingTranslation>()
                 translationsRepository
