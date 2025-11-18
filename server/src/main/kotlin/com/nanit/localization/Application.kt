@@ -26,52 +26,15 @@ import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import org.koin.core.KoinApplication
-import org.koin.dsl.koinApplication
+import org.koin.ktor.ext.inject
+import org.koin.ktor.plugin.Koin
 
-//private val databaseModule = module {
-//    singleOf(::DatabaseDriverFactory)
-//
-//    single {
-//        val driverFactory = get<DatabaseDriverFactory>().createDriver()
-//
-//        LocalizationDatabase(driverFactory)
-//    }
-//
-//    single {
-//        LocalizationRepositoryV2(
-//            queries = get<LocalizationDatabase>().localizationDatabaseQueries
-//        )
-//    } bind LocalizationRepositoryV2::class
-//
-//    single {
-//        MockDataRepositoryImpl(
-//            queries = get<LocalizationDatabase>().localizationDatabaseQueries
-//        )
-//    } bind MockDataRepository::class
-//}
-
-@Suppress("RedundantRequireNotNullCall")
-private data object ServerApp {
-    val application: KoinApplication by lazy {
-        koinApplication {
+fun main() {
+    embeddedServer(Netty, port = 8081, host = "0.0.0.0") {
+        install(Koin) {
             modules(ServerDOModule)
         }
-    }
 
-    init {
-        requireNotNull(application)
-    }
-
-    inline fun <reified T : Any> get(): T {
-        return application.koin.get<T>()
-    }
-}
-
-@Suppress("RedundantRequireNotNullCall")
-fun main() {
-    requireNotNull(ServerApp)
-    embeddedServer(Netty, port = 8081, host = "0.0.0.0") {
         install(ContentNegotiation) {
             json(Json {
                 ignoreUnknownKeys = true
@@ -84,11 +47,11 @@ fun main() {
     }.start(wait = true)
 }
 
-fun Application.module(
-    repo: TranslationsRepository = ServerApp.get(),
-    mockRepo: MockDataRepository = ServerApp.get(),
-) {
-    launch { mockRepo.fillWithMock() }
+private fun Application.module() {
+    val translationsRepository: TranslationsRepository by inject()
+    val mockDataRepository: MockDataRepository by inject()
+
+    launch { mockDataRepository.fillWithMock() }
 
     routing {
         get("/") { call.respondText("Nothing to show") }
@@ -99,7 +62,7 @@ fun Application.module(
                     val locale = ensureNotNull(call.queryParameters["locale"]) {
                         raise(Throwable("No query for locale provided"))
                     }
-                    val values = repo.getAllValuesBy(locale).bind()
+                    val values = translationsRepository.getAllValuesBy(locale).bind()
 
                     LMResponse.from(locale, values)
                 }
@@ -122,7 +85,7 @@ fun Application.module(
 
             put("/translation") {
                 val model = call.receive<UpdateTranslationModel>()
-                repo
+                translationsRepository
                     .updateStringValue(model)
                     .onLeft { thr ->
                         call.respondText(
@@ -142,7 +105,7 @@ fun Application.module(
         contentType(ContentType.Application.Json) {
             post("/translation") {
                 val incoming = call.receive<IncomingTranslation>()
-                repo
+                translationsRepository
                     .insert(incoming)
                     .onLeft { thr ->
                         call.respondText(

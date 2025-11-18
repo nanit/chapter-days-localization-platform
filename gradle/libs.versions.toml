@@ -26,6 +26,7 @@ koinBom = "4.1.0"
 [libraries]
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koinBom" }
 koin-core = { group = "io.insert-koin", name = "koin-core" }
+koin-ktor = { group = "io.insert-koin", name = "koin-ktor" }
 koin-android = { group = "io.insert-koin", name = "koin-android" }
 koin-android-compat = { group = "io.insert-koin", name = "koin-android-compat" }
 koin-android-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
