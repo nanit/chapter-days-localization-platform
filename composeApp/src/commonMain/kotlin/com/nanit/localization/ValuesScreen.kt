@@ -184,7 +184,7 @@ fun ValuesScreen(
             }
         }
 
-        val greeting = remember { Greeting().greet() }
+        val greeting = remember { "Greeting().greet()" }
         Text("Compose: $greeting")
         StuffList(mock)
 
