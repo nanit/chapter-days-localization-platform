@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -68,6 +67,9 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
+
+            implementation(projects.localizationManager)
+
         }
         jsMain.dependencies {
             implementation(libs.ktor.js)
@@ -110,5 +112,6 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    implementation(project(":LocalizationManager"))
 }
 
