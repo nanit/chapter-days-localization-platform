@@ -2,10 +2,13 @@ package com.nanit.localization
 
 //import io.ktor.client.call.body
 //import io.ktor.client.plugins.logging.Logging
+import co.touchlab.kermit.Logger
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
@@ -17,21 +20,39 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
 
+val WebLogger = Logger.withTag("WEB_LOGGER")
+
 object MockData {
     private val coroutineScope = CoroutineScope(
         Dispatchers.Default + SupervisorJob()
     )
+    private val _translations: MutableStateFlow<List<TranslationDomain>> = MutableStateFlow(emptyList())
+    val translations: StateFlow<List<TranslationDomain>> = _translations
+        .asStateFlow()
+        .onEach {
+            WebLogger.i { it.toString() }
+        }
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.Eagerly,
+            initialValue = _translations.value
+        )
 
     private val _trtr: Channel<String> = Channel(Channel.BUFFERED)
 
@@ -57,6 +78,9 @@ object MockData {
     )
 
     init {
+        coroutineScope.launch {
+            refresh()
+        }
 //        coroutineScope.launch {
 //            while (true){
 //                delay(1.seconds)
@@ -78,10 +102,8 @@ object MockData {
             LoggerStringsProvider.update("Calling ktor")
 
             val response = runCatching {
-                ApiClient.client.get("/translations"){
-                    url {
-                        parameter("locale", "en")
-                    }
+                ApiClient.client.get("/ev"){
+
                 }.also {
                     _trtr.send("Res: ST: ${it.status} | ${it.bodyAsText()}")
                 }
@@ -94,6 +116,36 @@ object MockData {
         }
     }
 
+    private suspend fun refresh() {
+        val wrapper: LMResponseList = ApiClient.client
+            .get("/ev")
+            .body()
+
+        _translations.update {
+            wrapper.values.map {lmr ->
+                lmr.values.map { v->
+                    Triple(lmr.locale, v.key, v.translation)
+                }
+            }
+                .flatten()
+                .groupBy { v -> v.second }
+                .map { (a,b) ->
+                    TranslationDomain(
+                        key = a,
+                        desc = null,
+                        values = b.map { (l,k,v) ->
+                            Stuff(parentKey =k, locale = CombinedLocale(l,l), value = v)
+                        }
+                    )
+                }
+                .sortedBy(TranslationDomain::key)
+        }
+    }
+
+    fun sendToBE(translationDomain: TranslationDomain) = coroutineScope.launch(Dispatchers.Default) {
+        val lmResponseList: LMResponseList = ApiClient.post("/translation", SendTranslationRequestBody.from(translationDomain))
+        refresh()
+    }
 
     private val lock: ReentrantLock = ReentrantLock()
     private val database: MutableMap<String, LocalHolder> = buildMap {
@@ -117,12 +169,27 @@ object MockData {
         callbacks[key] = obs
     }
 
-    fun put(key: String, loc: CombinedLocale, value: String) = lock.withLock {
-        database.compute(key){holder ->
-            requireNotNull(holder)
-            holder.let { v -> v.apply { values[loc] = value } }
+    fun put(key: String, loc: CombinedLocale, value: String) {
+        coroutineScope.launch(Dispatchers.Default) {
+            val requestBody = UpdateTranslationRequestBody(
+                locale = loc.first,
+                value = value,
+                key = key
+            )
+
+            ApiClient.client.put("/translation") {
+                setBody(requestBody)
+            }
+
+            refresh()
         }
-        callbacks.forEach { (_,v) -> v.invoke() }
+//        lock.withLock {
+//            database.compute(key){holder ->
+//                requireNotNull(holder)
+//                holder.let { v -> v.apply { values[loc] = value } }
+//            }
+//            callbacks.forEach { (_,v) -> v.invoke() }
+//        }
     }
 
     fun getAll(): List<TranslationDomain> = lock.withLock {
@@ -130,13 +197,13 @@ object MockData {
             TranslationDomain(
                 key = key,
                 desc = holder.desc,
-                values = holder.values.asSequence().map { (locale, trs) ->
+                values = holder.values.map { (locale, trs) ->
                     Stuff(
                         parentKey = key,
                         locale = locale,
                         value = trs
                     )
-                }.toSet()
+                }
             )
         }
     }

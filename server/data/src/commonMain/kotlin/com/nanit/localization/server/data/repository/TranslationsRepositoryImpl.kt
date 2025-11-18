@@ -59,6 +59,7 @@ class TranslationsRepositoryImpl(
                 value_ = value,
                 updated_at = Clock.System.now().toEpochMilliseconds()
             )
+            Unit
         }
     }
 
@@ -198,6 +199,16 @@ class TranslationsRepositoryImpl(
     suspend fun deleteStringPlural(key: String, locale: String = "en") =
         withContext(Dispatchers.Default) {
             queries.deleteStringPlural(key, locale)
+        }
+
+    override suspend fun getAllStringValues(): Either<Throwable, List<StringResource.Value>> =
+        withContext(Dispatchers.Default) {
+            Either.catch {
+                queries
+                    .getFullStringValueTable()
+                    .executeAsList()
+                    .map(StringValue::asModel)
+            }
         }
 
     override suspend fun insert(vararg value: StringResource.Value): Either<Throwable, Unit> {

@@ -2,7 +2,6 @@ package com.nanit.localization
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,11 +11,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
@@ -58,6 +60,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -76,36 +79,77 @@ fun CrowdinLikeScreen(
     val translationsList = remember { mutableStateListOf<TranslationDomain>() }
     var callbackTriggered by remember { mutableIntStateOf(0) }
 
-//    val str by MockData._logs.collectAsStateWithLifecycle()
+    val transList by MockData.translations.collectAsStateWithLifecycle()
     val logs = remember { mutableStateListOf<String>() }
 
-    LaunchedEffect(Unit) {
-        LoggerStringsProvider._state
-            .onEach {
-                println("New values: $it")
+    var showDialog by remember { mutableStateOf(false) }
+
+
+    if (showDialog) {
+        AddTranslationDialog(
+            onDismiss = { showDialog = false },
+            onApply = { key, description, enValue, esValue, frValue ->
+                val domain = TranslationDomain(
+                    key = key,
+                    desc = description,
+                    values = buildList {
+                        this += Stuff(
+                            parentKey = key,
+                            locale = CombinedLocale("en", "en"),
+                            value = enValue
+                        )
+                        esValue?.let {
+                            this += Stuff(
+                                parentKey = key,
+                                locale = CombinedLocale("es", "es"),
+                                value = it
+                            )
+                        }
+                        frValue?.let {
+                            this += Stuff(
+                                parentKey = key,
+                                locale = CombinedLocale("fr", "fr"),
+                                value = it
+                            )
+                        }
+                    }
+                )
+                MockData.sendToBE(domain)
+                // Handle the translation data
+                // esValue and frValue are nullable
+                showDialog = false
             }
-            .map { (mes,_) -> mes.toList() }
-            .collect {
-                logs.clear()
-                logs.addAll(it)
-            }
-    }
-    // Load data from MockData
-    LaunchedEffect(Unit) {
-        MockData.registerObse("CrowdinLikeScreen") {
-            callbackTriggered += 1
-            translationsList.clear()
-            translationsList.addAll(MockData.getAll())
-        }
-        translationsList.addAll(MockData.getAll())
+        )
     }
 
+//    LaunchedEffect(Unit) {
+//        LoggerStringsProvider._state
+//            .onEach {
+//                println("New values: $it")
+//            }
+//            .map { (mes,_) -> mes.toList() }
+//            .collect {
+//                logs.clear()
+//                logs.addAll(it)
+//            }
+//    }
+//    // Load data from MockData
+//    LaunchedEffect(Unit) {
+//        MockData.registerObse("CrowdinLikeScreen") {
+//            callbackTriggered += 1
+//            translationsList.clear()
+//            translationsList.addAll(MockData.getAll())
+//        }
+//        translationsList.addAll(MockData.getAll())
+//    }
+
+    // Refactor this cuz working a bit strange
     // Filter translations based on search query
     val filteredTranslations = remember(searchQuery, callbackTriggered) {
         if (searchQuery.isBlank()) {
-            translationsList
+            transList
         } else {
-            translationsList.filter { translation ->
+            transList.filter { translation ->
                 translation.key.contains(searchQuery, ignoreCase = true) ||
                 translation.desc?.contains(searchQuery, ignoreCase = true) == true ||
                 translation.values.any { it.value.contains(searchQuery, ignoreCase = true) }
@@ -125,7 +169,7 @@ fun CrowdinLikeScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO: Add new string key */ },
+                onClick = { showDialog = true  },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add new key")
@@ -138,9 +182,12 @@ fun CrowdinLikeScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            Text(
-                text = logs.joinToString("\n")
-            )
+//            Text(
+//                text = logs.joinToString("\n"),
+//                modifier = Modifier
+//                    .verticalScroll(rememberScrollState())
+//                    .heightIn(max = 64.dp)
+//            )
             // Search Bar
             SearchField(
                 query = searchQuery,
@@ -174,7 +221,7 @@ fun CrowdinLikeScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(
-                    items = filteredTranslations,
+                    items = transList,
                     key = { it.key }
                 ) { translation ->
                     TranslationCard(
@@ -443,7 +490,7 @@ private fun TranslationCardPreview() {
             translation = TranslationDomain(
                 key = "login_btn_sign_in",
                 desc = "Button used in Login Screen for Log In purpose",
-                values = setOf(
+                values = listOf(
                     Stuff(
                         parentKey = "login_btn_sign_in",
                         locale = CombinedLocale("en", "us"),

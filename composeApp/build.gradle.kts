@@ -46,8 +46,13 @@ kotlin {
             implementation(libs.ktor.cio)
         }
         commonMain.dependencies {
+            implementation("co.touchlab:kermit:2.0.8")
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.1")
             implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.compose)
+
             implementation(project.dependencies.platform(libs.arrow.bom))
             implementation(libs.arrow.cache4k)
 

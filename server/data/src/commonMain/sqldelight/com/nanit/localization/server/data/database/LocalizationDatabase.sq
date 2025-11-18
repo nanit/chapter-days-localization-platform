@@ -73,6 +73,9 @@ getAllStringValues:
 SELECT * FROM StringValue
 WHERE locale = ?;
 
+getFullStringValueTable:
+SELECT * FROM StringValue;
+
 deleteStringValue:
 DELETE FROM StringValue
 WHERE key = ? AND locale = ?;

@@ -67,20 +67,20 @@ private fun ListItemPreview() {
 data class TranslationDomain(
     val key: String,
     val desc: String?,
-    val values: Set<Stuff>,
+    val values: List<Stuff>,
 )
 
 data class Stuff(
     val parentKey: String,
     val locale: CombinedLocale,
     val value: String,
-): Comparable<CombinedLocale> {
-    override fun compareTo(other: CombinedLocale): Int = locale.value.compareTo(other.value)
-}
+)
 
 @JvmInline
 value class CombinedLocale(val value: String) {
     constructor(lang: String, region: String) : this("${lang.decap()}-${region.cap()}")
+
+    val first: String get() = value.split("-")[0]
 
     companion object {
         private fun String.cap(): String = buildString {

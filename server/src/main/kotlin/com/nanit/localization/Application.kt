@@ -58,6 +58,32 @@ private fun Application.module() {
         get("/") { call.respondText("Nothing to show") }
 
         contentType(ContentType.Application.Json) {
+            get("/ev") {
+                either {
+                    val values = translationsRepository
+                        .getAllStringValues()
+                        .bind()
+
+                    LMResponseList.from(values)
+                }
+                    .onLeft { thr ->
+                        call.respondText(
+                            contentType = ContentType.Application.Json,
+                            status = HttpStatusCode.NotFound,
+                            text = ErrorResponse
+                                .from(thr) { "HttpStatusCode.NotFound" }
+                                .let(Json::encodeToString),
+                        )
+                    }
+                    .map(Json::encodeToString)
+                    .onRight { responseStr ->
+                        call.respondText(
+                            text = responseStr,
+                            contentType = ContentType.Application.Json,
+                            status = HttpStatusCode.OK
+                        )
+                    }
+            }
             get("/translations") {
                 either {
                     val locale = ensureNotNull(call.queryParameters["locale"]) {
