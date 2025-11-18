@@ -90,25 +90,12 @@ fun Application.module(
     repo: LocalizationRepositoryV2 = ServerApp.get(),
     mockRepo: MockDataRepository = ServerApp.get(),
 ) {
-    launch {
-        mockRepo
-            .fillWithMock()
-            .onLeft {
-                val a = 1
-            }.onRight {
-                val b = 2
-            }
-    }
+    launch { mockRepo.fillWithMock() }
 
     routing {
         get("/") {
-            val res= mockRepo.fillWithMock()
-            val all = repo.getAll()
-            res.onLeft {
-                call.respondText("All failed: $it")
-            }.onRight {
-                call.respondText("All Success: $it")
-            }
+            mockRepo.fillWithMock()
+            call.respondText("All failed: ${repo.getAll()}")
         }
         get("/translations") {
             val allTranslations = repo.getAll()

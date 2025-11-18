@@ -21,24 +21,24 @@ class MockDataRepositoryImpl(
 
     override suspend fun fillWithMock(): Either<Throwable, Unit> = either {
         val process: (String) -> Either<Throwable, Unit> = { fileName ->
-            val content: String = catch(
-                block = {
-                    val f = File("server/data/src/commonMain/resources/localizations/$fileName").readText()
-                    f
-                },
-                catch = ::raise
-            )
+//            val content: String = catch(
+//                block = {
+//                    val f = File("server/data/src/commonMain/resources/localizations/$fileName").readText()
+//                    f
+//                },
+//                catch = ::raise
+//            )
             val enLoc: LocalizationJson = catch(
-                block = { json.decodeFromString<LocalizationJson>(content) },
+                block = { json.decodeFromString<LocalizationJson>(fileName) },
                 catch = ::raise
             )
 
             insertLoc(enLoc)
         }
 
-        process("strings_en.json").bind()
-        process("strings_es.json").bind()
-        process("strings_fr.json").bind()
+        process(enJsonMock).bind()
+        process(esJsonMock).bind()
+        process(frJsonMock).bind()
     }
 
     private fun insertLoc(

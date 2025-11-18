@@ -1,6 +1,7 @@
 -- String Value resources (simple key-value pairs)
 CREATE TABLE StringValue (
-    key TEXT NOT NULL PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    key TEXT NOT NULL,
     value TEXT NOT NULL,
     locale TEXT NOT NULL DEFAULT 'en',
     description TEXT,
