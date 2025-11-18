@@ -58,6 +58,8 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.logging)
 
+            implementation(libs.kotlinx.datetime)
+
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)

@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.localizationManager.NanitLocalization
 import kotlinx.coroutines.delay
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Demo screen to test LocalizationManager.
@@ -148,6 +150,7 @@ private fun ColumnScope.DefaultTestView(onLocaleChange: ((String) -> Unit)?) {
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun ColumnScope.PerformanceTestView() {
     var renderTime by remember { mutableStateOf<Long?>(null) }
@@ -158,9 +161,9 @@ private fun ColumnScope.PerformanceTestView() {
 
     // Measure initial render time
     LaunchedEffect(Unit) {
-        val startTime = System.currentTimeMillis()
+        val startTime = Clock.System.now().toEpochMilliseconds()
         delay(100) // Give time for initial composition
-        renderTime = System.currentTimeMillis() - startTime
+        renderTime = Clock.System.now().toEpochMilliseconds() - startTime
         isLoading = false
     }
 
