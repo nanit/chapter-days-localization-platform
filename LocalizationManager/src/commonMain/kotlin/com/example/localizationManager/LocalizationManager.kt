@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import com.example.localizationManager.api.FakeLocalizationApiClient
 import com.example.localizationManager.api.LocalizationApiClient
 import com.example.localizationManager.database.LocalizationDatabaseManager
+import com.example.localizationManager.database.LocalizationEnvironment
 //import com.nanit.localization.database.DatabaseDriverFactory
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.CoroutineScope
@@ -90,17 +91,9 @@ class LocalizationManager(
             refreshCallbacks.values.forEach { it.invoke() }
         }
     }
-
     private suspend fun loadStringsForCurrentLocale() {
         try {
-            // Try to load from storage first
-//            val cachedStrings = config.storage.getStrings(currentLocale.value.languageCode)
-
-//            if (cachedStrings.isNotEmpty()) {
-//                cachedStrings.forEach { (key, value) ->
-//                    cache.put(key, value)
-//                }
-//            }
+            updateLocalCacheWithDatabaseValues(currentLocale.value.languageCode)
 
             // Fetch from API in background
             fetchAndCacheStrings()
@@ -112,27 +105,27 @@ class LocalizationManager(
 
     private suspend fun fetchAndCacheStrings() {
         try {
-            val strings = localizationApiClient.fetchStrings(currentLocale.value.languageCode)
-
-            // Save to storage
-//            config.storage.saveStrings(currentLocale.value.languageCode, strings)
-
-            // Update cache
-            strings.forEach { (key, value) ->
-                cache.put(key, value)
-            }
+            localizationApiClient
+                .fetchStrings(currentLocale.value.languageCode)
+                .forEach {  (key, value) -> cache.put(key, value) }
         } catch (e: Exception) {
             println("Error fetching strings from API: ${e.message}")
         }
     }
 
+    private suspend fun updateLocalCacheWithDatabaseValues(locale: String) {
+        dbManager.loadStringResourcesForLocale(locale)
+            .forEach { resource -> cache.put(resource.first, resource.second) }
+    }
+
     suspend fun getString(key: String): String {
-        return cache.get(key) {
-            // Fallback: try to load from storage
-//            config.storage.getString(currentLocale.value.languageCode, key)
-//                ?: key // Return key as fallback
-            key
+        cache.get(key)?.let {
+            println("Result from cache for key: ${key}: it")
+            return it
         }
+        val dbLocalization = dbManager.loadStringOrDefault(key, LocalizationEnvironment(currentLocale.value.languageCode))
+        println(dbLocalization)
+        return dbLocalization
     }
 
     fun observeString(key: String): Flow<String> = flow {

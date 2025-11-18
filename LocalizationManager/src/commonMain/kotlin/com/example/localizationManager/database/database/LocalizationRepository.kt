@@ -60,6 +60,21 @@ class LocalizationRepository(sqlDriverProvider: SqlDriverProvider) {
         }
 
     /**
+     * Get all string values for a locale
+     */
+    suspend fun getAllStringValues(locale: String = "en"): List<StringResource.Value> =
+        withContext(Dispatchers.Default) {
+            queries.getAllStringValues(locale).executeAsList().map {
+                StringResource.Value(
+                    key = it.key,
+                    value = it.value_,
+                    locale = it.locale,
+                    description = it.description
+                )
+            }
+        }
+
+    /**
      * Delete a string value
      */
     suspend fun deleteStringValue(key: String, locale: String = "en") = withContext(Dispatchers.Default) {

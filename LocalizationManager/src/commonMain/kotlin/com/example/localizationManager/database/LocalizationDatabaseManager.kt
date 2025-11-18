@@ -48,11 +48,17 @@ class LocalizationDatabaseManager(sqlDriverProvider: SqlDriverProvider) {
         return stringLoader.loadString(key, env)
     }
 
+    suspend fun loadStringResourcesForLocale(locale: String): List<Pair<String, String>> {
+        return repository.getAllStringValues(locale).map { resource ->
+            resource.key to resource.value
+        }
+    }
+
     /**
      * Load a string with a default value if not found
      */
-    suspend fun loadStringOrDefault(key: String, default: String, env: LocalizationEnvironment = LocalizationEnvironment()): String {
-        return stringLoader.loadStringOrDefault(key, env, default)
+    suspend fun loadStringOrDefault(key: String, env: LocalizationEnvironment = LocalizationEnvironment()): String {
+        return stringLoader.loadStringOrDefault(key, env)
     }
 
     /**

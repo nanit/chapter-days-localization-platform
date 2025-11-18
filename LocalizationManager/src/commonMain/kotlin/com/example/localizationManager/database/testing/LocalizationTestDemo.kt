@@ -197,7 +197,6 @@ class LocalizationTestDemo(private val manager: LocalizationDatabaseManager) {
 
         val valueWithDefault = manager.loadStringOrDefault(
             nonExistentKey,
-            default = "Default Value",
             env = env
         )
         results.add("  $nonExistentKey (with default) = \"$valueWithDefault\"")

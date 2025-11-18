@@ -99,6 +99,6 @@ class DatabaseStringLoader(private val repository: LocalizationRepository) : Str
 /**
  * Extension functions for easier usage
  */
-suspend fun StringLoader.loadStringOrDefault(key: String, env: LocalizationEnvironment, default: String = ""): String {
-    return loadString(key, env) ?: default
+suspend fun StringLoader.loadStringOrDefault(key: String, env: LocalizationEnvironment): String {
+    return loadString(key, env) ?: key
 }
