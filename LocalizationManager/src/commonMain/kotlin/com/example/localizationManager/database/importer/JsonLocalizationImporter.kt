@@ -1,7 +1,7 @@
-package com.nanit.localization.importer
+package com.example.localizationManager.database.importer
 
-import com.nanit.localization.LocalizationDatabaseManager
-import com.nanit.localization.model.PluralQuantity
+import com.example.localizationManager.database.LocalizationDatabaseManager
+import com.example.localizationManager.database.model.PluralQuantity
 import kotlinx.serialization.json.Json
 
 /**

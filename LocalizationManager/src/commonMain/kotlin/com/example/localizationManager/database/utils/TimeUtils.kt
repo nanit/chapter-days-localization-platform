@@ -1,4 +1,4 @@
-package com.nanit.localization.utils
+package com.example.localizationManager.database.utils
 
 /**
  * Get current time in milliseconds

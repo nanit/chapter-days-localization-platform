@@ -1,4 +1,4 @@
-package com.nanit.localization.importer
+package com.example.localizationManager.database.importer
 
 import kotlinx.serialization.Serializable
 

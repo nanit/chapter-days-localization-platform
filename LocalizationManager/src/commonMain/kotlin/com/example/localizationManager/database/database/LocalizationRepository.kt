@@ -1,20 +1,17 @@
-package com.nanit.localization.database
+package com.example.localizationManager.database.database
 
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
-import com.nanit.localization.model.PluralQuantity
-import com.nanit.localization.model.StringResource
-import com.nanit.localization.utils.currentTimeMillis
+import com.example.localizationManager.database.model.PluralQuantity
+import com.example.localizationManager.database.model.StringResource
+import com.example.localizationManager.database.utils.currentTimeMillis
+import com.nanit.localization.database.LocalizationDatabase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 /**
  * Repository for managing localization string resources in the database
  */
 class LocalizationRepository(sqlDriverProvider: SqlDriverProvider) {
-    private val database = LocalizationDatabase(sqlDriverProvider.createDriver())
+    private val database = LocalizationDatabase.Companion(sqlDriverProvider.createDriver())
     private val queries = database.localizationDatabaseQueries
 
     // ==================== String Value Operations ====================

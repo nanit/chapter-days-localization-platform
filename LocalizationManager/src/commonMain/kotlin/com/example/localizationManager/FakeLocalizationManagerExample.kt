@@ -2,7 +2,7 @@ package com.example.localizationManager
 
 import app.cash.sqldelight.db.SqlDriver
 import com.example.localizationManager.api.FakeLocalizationApiClient
-import com.nanit.localization.database.SqlDriverProvider
+import com.example.localizationManager.database.database.SqlDriverProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 

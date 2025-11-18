@@ -1,8 +1,9 @@
-package com.nanit.localization.testing
+package com.example.localizationManager.database.testing
 
-import com.nanit.localization.LocalizationEnvironment
-import com.nanit.localization.LocalizationDatabaseManager
-import com.nanit.localization.importer.JsonLocalizationImporter
+import com.example.localizationManager.database.LocalizationDatabaseManager
+import com.example.localizationManager.database.LocalizationEnvironment
+import com.example.localizationManager.database.importer.JsonLocalizationImporter
+import com.example.localizationManager.database.importer.MultiImportResult
 
 /**
  * Comprehensive test demonstration of the localization system
@@ -72,7 +73,7 @@ class LocalizationTestDemo(private val manager: LocalizationDatabaseManager) {
     /**
      * Import mock JSON data for testing
      */
-    private suspend fun importMockData(): com.nanit.localization.importer.MultiImportResult {
+    private suspend fun importMockData(): MultiImportResult {
         val mockData = mapOf(
             "en" to getMockJsonEn(),
             "es" to getMockJsonEs(),

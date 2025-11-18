@@ -1,7 +1,6 @@
 package com.example.localizationManager
 
-import com.example.localizationManager.api.ApiConfig
-import com.nanit.localization.database.SqlDriverProvider
+import com.example.localizationManager.database.database.SqlDriverProvider
 
 data class LocalizationManagerConfig(
     val localeProvider: LocaleProvider,

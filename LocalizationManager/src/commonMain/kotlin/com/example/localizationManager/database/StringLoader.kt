@@ -1,7 +1,6 @@
-package com.nanit.localization
+package com.example.localizationManager.database
 
-import com.nanit.localization.database.LocalizationRepository
-import com.nanit.localization.model.StringResource
+import com.example.localizationManager.database.database.LocalizationRepository
 
 /**
  * Configuration for loading strings from the database

@@ -5,7 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
-import com.nanit.localization.database.AndroidSqlDriverProvider
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+import com.example.localizationManager.database.database.SqlDriverProvider
+import com.nanit.localization.database.LocalizationDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -43,6 +46,19 @@ class AndroidLocaleProvider(
 
     fun cleanup() {
         context.unregisterReceiver(localeReceiver)
+    }
+}
+
+
+class AndroidSqlDriverProvider(
+    val context: Context
+): SqlDriverProvider {
+    override fun createDriver(): SqlDriver {
+        return AndroidSqliteDriver(
+            schema = LocalizationDatabase.Schema,
+            context = context,
+            name = "localization.db"
+        )
     }
 }
 

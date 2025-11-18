@@ -1,7 +1,7 @@
-package com.nanit.localization
+package com.example.localizationManager.database
 
-import com.nanit.localization.database.SqlDriverProvider
-import com.nanit.localization.model.PluralQuantity
+import com.example.localizationManager.database.database.SqlDriverProvider
+import com.example.localizationManager.database.model.PluralQuantity
 
 /**
  * Example usage of the LocalizationManager

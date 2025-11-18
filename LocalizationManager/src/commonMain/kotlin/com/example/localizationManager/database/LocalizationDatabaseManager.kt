@@ -1,9 +1,9 @@
-package com.nanit.localization
+package com.example.localizationManager.database
 
-import com.nanit.localization.database.LocalizationRepository
-import com.nanit.localization.database.SqlDriverProvider
-import com.nanit.localization.model.PluralQuantity
-import com.nanit.localization.model.StringResource
+import com.example.localizationManager.database.database.LocalizationRepository
+import com.example.localizationManager.database.database.SqlDriverProvider
+import com.example.localizationManager.database.model.PluralQuantity
+import com.example.localizationManager.database.model.StringResource
 
 /**
  * Main facade for managing localization in a Compose Multiplatform application

@@ -1,4 +1,4 @@
-package com.nanit.localization.model
+package com.example.localizationManager.database.model
 
 /**
  * Sealed class representing different types of string resources

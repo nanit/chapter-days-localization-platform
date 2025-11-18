@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
+    alias(libs.plugins.sqldelight)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
@@ -73,9 +74,11 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.ui)
+                implementation(libs.sqldelight.runtime)
+                implementation(libs.sqldelight.coroutines)
 
                 // Shared module dependency
-                implementation(project(":shared"))
+//                implementation(project(":shared"))
             }
         }
 
@@ -85,16 +88,17 @@ kotlin {
             }
         }
 
-//        androidNativeMain {
-//            dependencies {
-//                implementation(projects.shared)
-//            }
-//        }
+        androidNativeMain {
+            dependencies {
+                implementation(project(":shared"))
+            }
+        }
 
         androidMain {
             dependencies {
                 implementation(libs.ktor.client.okhttp)
-                implementation(project(":shared"))
+                implementation(libs.sqldelight.android)
+
 //                implementation(projects.shared)
                 // Add Android-specific dependencies here. Note that this source set depends on
                 // commonMain by default and will correctly pull the Android artifacts of any KMP
@@ -113,7 +117,9 @@ kotlin {
         iosMain {
             dependencies {
                 implementation(libs.ktor.client.darwin)
-                implementation(project(":shared"))
+                implementation(libs.sqldelight.native)
+
+//                implementation(project(":shared"))
                 // Add iOS-specific dependencies here. This a source set created by Kotlin Gradle
                 // Plugin (KGP) that each specific iOS target (e.g., iosX64) depends on as
                 // part of KMP's default source set hierarchy. Note that this source set depends
@@ -123,4 +129,12 @@ kotlin {
         }
     }
 
+}
+
+sqldelight {
+    databases {
+        create("LocalizationDatabase") {
+            packageName.set("com.nanit.localization.database")
+        }
+    }
 }

@@ -13,15 +13,15 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 //        )
 //    }
 //}
-
-class AndroidSqlDriverProvider(
-    val context: Context
-): SqlDriverProvider {
-    override fun createDriver(): SqlDriver {
-        return AndroidSqliteDriver(
-            schema = LocalizationDatabase.Schema,
-            context = context,
-            name = "localization.db"
-        )
-    }
-}
+//
+//class AndroidSqlDriverProvider(
+//    val context: Context
+//): SqlDriverProvider {
+//    override fun createDriver(): SqlDriver {
+//        return AndroidSqliteDriver(
+//            schema = LocalizationDatabase.Schema,
+//            context = context,
+//            name = "localization.db"
+//        )
+//    }
+//}

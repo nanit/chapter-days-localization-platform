@@ -7,11 +7,11 @@ import app.cash.sqldelight.driver.native.NativeSqliteDriver
 //
 //}
 
-class IosSqlDriverProvider : SqlDriverProvider {
-    override fun createDriver(): SqlDriver {
-        return NativeSqliteDriver(
-            schema = LocalizationDatabase.Schema,
-            name = "localization.db"
-        )
-    }
-}
+//class IosSqlDriverProvider : SqlDriverProvider {
+//    override fun createDriver(): SqlDriver {
+//        return NativeSqliteDriver(
+//            schema = LocalizationDatabase.Schema,
+//            name = "localization.db"
+//        )
+//    }
+//}

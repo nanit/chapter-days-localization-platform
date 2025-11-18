@@ -1,4 +1,4 @@
-package com.nanit.localization.database
+package com.example.localizationManager.database.database
 
 import app.cash.sqldelight.db.SqlDriver
 
