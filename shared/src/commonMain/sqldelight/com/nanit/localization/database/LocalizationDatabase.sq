@@ -1,0 +1,139 @@
+-- String Value resources (simple key-value pairs)
+CREATE TABLE StringValue (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    key TEXT NOT NULL,
+    value TEXT NOT NULL,
+    locale TEXT NOT NULL DEFAULT 'en',
+    description TEXT,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    UNIQUE(key, locale)
+);
+
+-- String Array resources
+CREATE TABLE StringArray (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    key TEXT NOT NULL,
+    locale TEXT NOT NULL DEFAULT 'en',
+    description TEXT,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    UNIQUE(key, locale)
+);
+
+-- String Array Items (individual items in an array)
+CREATE TABLE StringArrayItem (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    array_id INTEGER NOT NULL,
+    value TEXT NOT NULL,
+    position INTEGER NOT NULL,
+    FOREIGN KEY (array_id) REFERENCES StringArray(id) ON DELETE CASCADE
+);
+
+-- String Plural resources
+CREATE TABLE StringPlural (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    key TEXT NOT NULL,
+    locale TEXT NOT NULL DEFAULT 'en',
+    description TEXT,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    UNIQUE(key, locale)
+);
+
+-- String Plural Quantity (zero, one, two, few, many, other)
+CREATE TABLE StringPluralQuantity (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    plural_id INTEGER NOT NULL,
+    quantity TEXT NOT NULL CHECK(quantity IN ('zero', 'one', 'two', 'few', 'many', 'other')),
+    value TEXT NOT NULL,
+    FOREIGN KEY (plural_id) REFERENCES StringPlural(id) ON DELETE CASCADE,
+    UNIQUE(plural_id, quantity)
+);
+
+-- Queries for StringValue
+insertStringValue:
+INSERT INTO StringValue(key, value, locale, description, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?, ?);
+
+updateStringValue:
+UPDATE StringValue
+SET value = ?, description = ?, updated_at = ?
+WHERE key = ? AND locale = ?;
+
+getStringValue:
+SELECT * FROM StringValue
+WHERE key = ? AND locale = ?;
+
+getAllStringValues:
+SELECT * FROM StringValue
+WHERE locale = ?;
+
+deleteStringValue:
+DELETE FROM StringValue
+WHERE key = ? AND locale = ?;
+
+-- Queries for StringArray
+insertStringArray:
+INSERT INTO StringArray(key, locale, description, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?);
+
+getStringArray:
+SELECT * FROM StringArray
+WHERE key = ? AND locale = ?;
+
+getAllStringArrays:
+SELECT * FROM StringArray
+WHERE locale = ?;
+
+deleteStringArray:
+DELETE FROM StringArray
+WHERE key = ? AND locale = ?;
+
+-- Queries for StringArrayItem
+insertStringArrayItem:
+INSERT INTO StringArrayItem(array_id, value, position)
+VALUES (?, ?, ?);
+
+getStringArrayItems:
+SELECT * FROM StringArrayItem
+WHERE array_id = ?
+ORDER BY position;
+
+deleteStringArrayItems:
+DELETE FROM StringArrayItem
+WHERE array_id = ?;
+
+-- Queries for StringPlural
+insertStringPlural:
+INSERT INTO StringPlural(key, locale, description, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?);
+
+getStringPlural:
+SELECT * FROM StringPlural
+WHERE key = ? AND locale = ?;
+
+getAllStringPlurals:
+SELECT * FROM StringPlural
+WHERE locale = ?;
+
+deleteStringPlural:
+DELETE FROM StringPlural
+WHERE key = ? AND locale = ?;
+
+-- Queries for StringPluralQuantity
+insertStringPluralQuantity:
+INSERT INTO StringPluralQuantity(plural_id, quantity, value)
+VALUES (?, ?, ?);
+
+getStringPluralQuantities:
+SELECT * FROM StringPluralQuantity
+WHERE plural_id = ?;
+
+getStringPluralQuantity:
+SELECT * FROM StringPluralQuantity
+WHERE plural_id = ? AND quantity = ?;
+
+deleteStringPluralQuantities:
+DELETE FROM StringPluralQuantity
+WHERE plural_id = ?;
