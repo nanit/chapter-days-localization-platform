@@ -35,7 +35,7 @@ class LocalizationRepositoryV2(
             )
         }
 
-    suspend fun getAllValuesBy(
+    override suspend fun getAllValuesBy(
         locale: String
     ): Either<Throwable, List<StringResource.Value>> = withContext(Dispatchers.Default) {
         Either
@@ -46,7 +46,7 @@ class LocalizationRepositoryV2(
     /**
      * Update an existing string value resource
      */
-    suspend fun updateStringValue(
+    override suspend fun updateStringValue(
         model: UpdateTranslationModel,
     ): Either<Throwable, Unit> = withContext(Dispatchers.Default) {
         val (locale, key, value) = model

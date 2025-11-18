@@ -2,15 +2,13 @@ package com.nanit.localization
 
 import arrow.core.raise.either
 import arrow.core.raise.ensureNotNull
-import com.nanit.localization.server.data.database.DatabaseDriverFactory
-import com.nanit.localization.server.data.database.LocalizationDatabase
-import com.nanit.localization.server.data.database.LocalizationRepositoryV2
-import com.nanit.localization.server.data.repository.MockDataRepositoryImpl
+import com.nanit.localization.server.di.ServerDOModule
 import com.nanit.localization.server.domain.model.IncomingTranslation
 import com.nanit.localization.server.domain.model.LMResponse
 import com.nanit.localization.server.domain.model.LMResponseList
 import com.nanit.localization.server.domain.model.UpdateTranslationModel
 import com.nanit.localization.server.domain.repository.MockDataRepository
+import com.nanit.localization.server.domain.repository.TranslationsRepository
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
@@ -29,38 +27,35 @@ import io.ktor.server.routing.routing
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.koin.core.KoinApplication
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
 import org.koin.dsl.koinApplication
-import org.koin.dsl.module
 
-private val databaseModule = module {
-    singleOf(::DatabaseDriverFactory)
-
-    single {
-        val driverFactory = get<DatabaseDriverFactory>().createDriver()
-
-        LocalizationDatabase(driverFactory)
-    }
-
-    single {
-        LocalizationRepositoryV2(
-            queries = get<LocalizationDatabase>().localizationDatabaseQueries
-        )
-    } bind LocalizationRepositoryV2::class
-
-    single {
-        MockDataRepositoryImpl(
-            queries = get<LocalizationDatabase>().localizationDatabaseQueries
-        )
-    } bind MockDataRepository::class
-}
+//private val databaseModule = module {
+//    singleOf(::DatabaseDriverFactory)
+//
+//    single {
+//        val driverFactory = get<DatabaseDriverFactory>().createDriver()
+//
+//        LocalizationDatabase(driverFactory)
+//    }
+//
+//    single {
+//        LocalizationRepositoryV2(
+//            queries = get<LocalizationDatabase>().localizationDatabaseQueries
+//        )
+//    } bind LocalizationRepositoryV2::class
+//
+//    single {
+//        MockDataRepositoryImpl(
+//            queries = get<LocalizationDatabase>().localizationDatabaseQueries
+//        )
+//    } bind MockDataRepository::class
+//}
 
 @Suppress("RedundantRequireNotNullCall")
 private data object ServerApp {
     val application: KoinApplication by lazy {
         koinApplication {
-            modules(databaseModule)
+            modules(ServerDOModule)
         }
     }
 
@@ -86,12 +81,11 @@ fun main() {
         }
 
         module()
-    }
-        .start(wait = true)
+    }.start(wait = true)
 }
 
 fun Application.module(
-    repo: LocalizationRepositoryV2 = ServerApp.get(),
+    repo: TranslationsRepository = ServerApp.get(),
     mockRepo: MockDataRepository = ServerApp.get(),
 ) {
     launch { mockRepo.fillWithMock() }

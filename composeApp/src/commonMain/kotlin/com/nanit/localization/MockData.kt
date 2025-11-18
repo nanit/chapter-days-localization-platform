@@ -4,6 +4,7 @@ package com.nanit.localization
 //import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -77,7 +78,11 @@ object MockData {
             LoggerStringsProvider.update("Calling ktor")
 
             val response = runCatching {
-                ApiClient.client.get("/").also {
+                ApiClient.client.get("/translations"){
+                    url {
+                        parameter("locale", "en")
+                    }
+                }.also {
                     _trtr.send("Res: ST: ${it.status} | ${it.bodyAsText()}")
                 }
             }.onFailure {

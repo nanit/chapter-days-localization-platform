@@ -15,8 +15,9 @@ application {
 }
 
 dependencies {
-    implementation(projects.server.data)
+//    implementation(projects.server.data)
     implementation(projects.server.domain)
+    implementation(projects.server.di)
 
     implementation(project.dependencies.platform(libs.arrow.bom))
     implementation(libs.arrow.core)
