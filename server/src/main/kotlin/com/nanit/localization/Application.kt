@@ -3,6 +3,7 @@ package com.nanit.localization
 import arrow.core.raise.either
 import arrow.core.raise.ensureNotNull
 import com.nanit.localization.server.di.ServerDOModule
+import com.nanit.localization.server.domain.model.ErrorResponse
 import com.nanit.localization.server.domain.model.IncomingTranslation
 import com.nanit.localization.server.domain.model.LMResponse
 import com.nanit.localization.server.domain.model.LMResponseList
@@ -70,11 +71,13 @@ private fun Application.module() {
                         call.respondText(
                             contentType = ContentType.Application.Json,
                             status = HttpStatusCode.NotFound,
-                        ) { thr.message ?: "Unprocessable" }
+                            text = ErrorResponse
+                                .from(thr) { "HttpStatusCode.NotFound" }
+                                .let(Json::encodeToString),
+                        )
                     }
                     .map(Json::encodeToString)
                     .onRight { responseStr ->
-
                         call.respondText(
                             text = responseStr,
                             contentType = ContentType.Application.Json,
@@ -91,7 +94,10 @@ private fun Application.module() {
                         call.respondText(
                             contentType = ContentType.Application.Json,
                             status = HttpStatusCode.NotFound,
-                        ) { thr.message ?: "NotFound" }
+                            text = ErrorResponse
+                                .from(thr) { "HttpStatusCode.NotFound" }
+                                .let(Json::encodeToString),
+                        )
                     }
                     .onRight {
                         call.respondText(
@@ -109,7 +115,10 @@ private fun Application.module() {
                         call.respondText(
                             contentType = ContentType.Application.Json,
                             status = HttpStatusCode.UnprocessableEntity,
-                        ) { thr.message ?: "Unprocessable" }
+                            text = ErrorResponse
+                                .from(thr) { "HttpStatusCode.UnprocessableEntity" }
+                                .let(Json::encodeToString),
+                        )
                     }
                     .map(LMResponseList::from)
                     .map(Json::encodeToString)
