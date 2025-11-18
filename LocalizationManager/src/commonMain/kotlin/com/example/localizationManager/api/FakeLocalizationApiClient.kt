@@ -11,38 +11,60 @@ class FakeLocalizationApiClient(
     private val delayMillis: Long = 500L
 ) : LocalizationApiClient {
 
-    private val mockData = mapOf(
-        "en" to mapOf(
-            "welcome_message" to "Welcome to our app!",
-            "login_button" to "Login",
-            "signup_button" to "Sign Up",
-            "settings_title" to "Settings",
-            "profile_title" to "Profile",
-            "logout_button" to "Logout",
-            "greeting" to "Hello",
-            "goodbye" to "Goodbye"
-        ),
-        "es" to mapOf(
-            "welcome_message" to "¡Bienvenido a nuestra aplicación!",
-            "login_button" to "Iniciar sesión",
-            "signup_button" to "Registrarse",
-            "settings_title" to "Configuración",
-            "profile_title" to "Perfil",
-            "logout_button" to "Cerrar sesión",
-            "greeting" to "Hola",
-            "goodbye" to "Adiós"
-        ),
-        "fr" to mapOf(
-            "welcome_message" to "Bienvenue dans notre application!",
-            "login_button" to "Connexion",
-            "signup_button" to "S'inscrire",
-            "settings_title" to "Paramètres",
-            "profile_title" to "Profil",
-            "logout_button" to "Déconnexion",
-            "greeting" to "Bonjour",
-            "goodbye" to "Au revoir"
-        ),
-        "he" to mapOf(
+    private val mockData: Map<String, Map<String, String>> = buildMap {
+        // Generate 1000 key-value pairs for 3 languages (en, es, fr)
+        val count = 1000
+
+        // English
+        put("en", buildMap {
+            for (i in 0 until count) {
+                put("key_$i", "English text for key $i - This is a sample localization string")
+            }
+            // Keep original keys for compatibility
+            put("welcome_message", "Welcome to our app!")
+            put("login_button", "Login")
+            put("signup_button", "Sign Up")
+            put("settings_title", "Settings")
+            put("profile_title", "Profile")
+            put("logout_button", "Logout")
+            put("greeting", "Hello")
+            put("goodbye", "Goodbye")
+        })
+
+        // Spanish
+        put("es", buildMap {
+            for (i in 0 until count) {
+                put("key_$i", "Texto en español para la clave $i - Esta es una cadena de localización de ejemplo")
+            }
+            // Keep original keys for compatibility
+            put("welcome_message", "¡Bienvenido a nuestra aplicación!")
+            put("login_button", "Iniciar sesión")
+            put("signup_button", "Registrarse")
+            put("settings_title", "Configuración")
+            put("profile_title", "Perfil")
+            put("logout_button", "Cerrar sesión")
+            put("greeting", "Hola")
+            put("goodbye", "Adiós")
+        })
+
+        // French
+        put("fr", buildMap {
+            for (i in 0 until count) {
+                put("key_$i", "Texte français pour la clé $i - Ceci est un exemple de chaîne de localisation")
+            }
+            // Keep original keys for compatibility
+            put("welcome_message", "Bienvenue dans notre application!")
+            put("login_button", "Connexion")
+            put("signup_button", "S'inscrire")
+            put("settings_title", "Paramètres")
+            put("profile_title", "Profil")
+            put("logout_button", "Déconnexion")
+            put("greeting", "Bonjour")
+            put("goodbye", "Au revoir")
+        })
+
+        // Keep other languages with original data
+        put("he", mapOf(
             "welcome_message" to "ברוכים הבאים לאפליקציה שלנו!",
             "login_button" to "התחברות",
             "signup_button" to "הרשמה",
@@ -51,8 +73,9 @@ class FakeLocalizationApiClient(
             "logout_button" to "התנתקות",
             "greeting" to "שלום",
             "goodbye" to "להתראות"
-        ),
-        "de" to mapOf(
+        ))
+
+        put("de", mapOf(
             "welcome_message" to "Willkommen in unserer App!",
             "login_button" to "Anmelden",
             "signup_button" to "Registrieren",
@@ -61,8 +84,8 @@ class FakeLocalizationApiClient(
             "logout_button" to "Abmelden",
             "greeting" to "Hallo",
             "goodbye" to "Auf Wiedersehen"
-        )
-    )
+        ))
+    }
 
     override suspend fun fetchStrings(locale: String): Map<String, String> {
         // Simulate network delay
