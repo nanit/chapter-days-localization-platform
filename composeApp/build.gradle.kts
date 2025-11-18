@@ -33,11 +33,11 @@ kotlin {
         binaries.executable()
     }
     
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
+//    @OptIn(ExperimentalWasmDsl::class)
+//    wasmJs {
+//        browser()
+//        binaries.executable()
+//    }
     
     sourceSets {
         androidMain.dependencies {
@@ -52,10 +52,10 @@ kotlin {
             implementation(libs.arrow.cache4k)
 
             // Ktor client dependencies
-            implementation(libs.ktor.core)
+            implementation(libs.ktor.client.core)
             implementation(libs.ktor.cio)
-            implementation(libs.ktor.contentNegotiation)
-            implementation(libs.ktor.jsonSerialization)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.logging)
 
             implementation(compose.runtime)

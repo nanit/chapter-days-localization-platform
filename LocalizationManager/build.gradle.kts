@@ -62,7 +62,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(libs.kotlinx.coroutines)
+                implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.cache4k)
                 implementation(libs.kotlinx.serialization.json)

@@ -29,7 +29,7 @@ dependencies {
     implementation(libs.ktor.serverCore)
     implementation(libs.ktor.serverNetty)
     implementation(libs.ktor.serverContentNegotiation)
-    implementation(libs.ktor.jsonSerialization)
+    implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.ktor.serverTestHost)
