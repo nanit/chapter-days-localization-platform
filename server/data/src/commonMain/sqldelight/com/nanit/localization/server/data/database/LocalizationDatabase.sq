@@ -62,7 +62,7 @@ VALUES (?, ?, ?, ?, ?, ?);
 
 updateStringValue:
 UPDATE StringValue
-SET value = ?, description = ?, updated_at = ?
+SET value = ?, updated_at = ?
 WHERE key = ? AND locale = ?;
 
 getStringValue:

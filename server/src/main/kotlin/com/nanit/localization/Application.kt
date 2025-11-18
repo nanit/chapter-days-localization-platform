@@ -1,10 +1,15 @@
 package com.nanit.localization
 
+import arrow.core.raise.either
+import arrow.core.raise.ensureNotNull
 import com.nanit.localization.server.data.database.DatabaseDriverFactory
 import com.nanit.localization.server.data.database.LocalizationDatabase
 import com.nanit.localization.server.data.database.LocalizationRepositoryV2
 import com.nanit.localization.server.data.repository.MockDataRepositoryImpl
-import com.nanit.localization.server.domain.model.StringResource
+import com.nanit.localization.server.domain.model.IncomingTranslation
+import com.nanit.localization.server.domain.model.LMResponse
+import com.nanit.localization.server.domain.model.LMResponseList
+import com.nanit.localization.server.domain.model.UpdateTranslationModel
 import com.nanit.localization.server.domain.repository.MockDataRepository
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -19,10 +24,9 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.contentType
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.launch
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.koin.core.KoinApplication
 import org.koin.core.module.dsl.singleOf
@@ -93,36 +97,75 @@ fun Application.module(
     launch { mockRepo.fillWithMock() }
 
     routing {
-        get("/") {
-            mockRepo.fillWithMock()
-            call.respondText("All failed: ${repo.getAll()}")
+        get("/") { call.respondText("Nothing to show") }
+
+        contentType(ContentType.Application.Json) {
+            get("/translations") {
+                either {
+                    val locale = ensureNotNull(call.queryParameters["locale"]) {
+                        raise(Throwable("No query for locale provided"))
+                    }
+                    val values = repo.getAllValuesBy(locale).bind()
+
+                    LMResponse.from(locale, values)
+                }
+                    .onLeft { thr ->
+                        call.respondText(
+                            contentType = ContentType.Application.Json,
+                            status = HttpStatusCode.NotFound,
+                        ) { thr.message ?: "Unprocessable" }
+                    }
+                    .map(Json::encodeToString)
+                    .onRight { responseStr ->
+
+                        call.respondText(
+                            text = responseStr,
+                            contentType = ContentType.Application.Json,
+                            status = HttpStatusCode.OK
+                        )
+                    }
+            }
+
+            put("/translation") {
+                val model = call.receive<UpdateTranslationModel>()
+                repo
+                    .updateStringValue(model)
+                    .onLeft { thr ->
+                        call.respondText(
+                            contentType = ContentType.Application.Json,
+                            status = HttpStatusCode.NotFound,
+                        ) { thr.message ?: "NotFound" }
+                    }
+                    .onRight {
+                        call.respondText(
+                            "OK",
+                            status = HttpStatusCode.NoContent
+                        )
+                    }
+            }
         }
-        get("/translations") {
-            val allTranslations = repo.getAll()
-            call.respondText("Ktor 2: WTF")
-        }
+
         contentType(ContentType.Application.Json) {
             post("/translation") {
-                val incoming = call.receive<TransInput>()
-                repo.insertStringValue(incoming.toStringValue())
-                call.respondText(
-                    "Customer stored correctly: $incoming",
-                    status = HttpStatusCode.Created
-                )
+                val incoming = call.receive<IncomingTranslation>()
+                repo
+                    .insert(incoming)
+                    .onLeft { thr ->
+                        call.respondText(
+                            contentType = ContentType.Application.Json,
+                            status = HttpStatusCode.UnprocessableEntity,
+                        ) { thr.message ?: "Unprocessable" }
+                    }
+                    .map(LMResponseList::from)
+                    .map(Json::encodeToString)
+                    .onRight { responseStr ->
+                        call.respondText(
+                            text = responseStr,
+                            contentType = ContentType.Application.Json,
+                            status = HttpStatusCode.OK
+                        )
+                    }
             }
         }
     }
 }
-
-@Serializable
-data class TransInput(
-    @SerialName("key")
-    val key: String,
-    @SerialName("description")
-    val description: String?,
-    @SerialName("value")
-    val value: String,
-)
-
-private fun TransInput.toStringValue(): StringResource.Value =
-    StringResource.Value(key, value, description = description)

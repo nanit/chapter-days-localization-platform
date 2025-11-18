@@ -37,7 +37,6 @@ class LocalizationRepository(databaseDriverFactory: DatabaseDriverFactory) {
     suspend fun updateStringValue(resource: StringResource.Value) = withContext(Dispatchers.Default) {
         queries.updateStringValue(
             value_ = resource.value,
-            description = resource.description,
             updated_at = Clock.System.now().toEpochMilliseconds(),
             key = resource.key,
             locale = resource.locale
