@@ -13,6 +13,8 @@ import com.example.localizationManager.api.FakeLocalizationApiClient
 import com.example.localizationManager.api.KtorLocalizationApiClient
 import com.example.localizationManager.api.LocalizationApiClient
 import io.github.reactivecircus.cache4k.Cache
+import io.github.reactivecircus.cache4k.CacheEvent
+import io.github.reactivecircus.cache4k.CacheEventListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -43,6 +45,9 @@ class LocalizationManager(
 
     private val cache = Cache.Builder<String, String>()
         .maximumCacheSize(config.cacheSize)
+        .eventListener { event ->
+            refreshCallbacks[event.key]?.invoke()
+        }
         .build()
 
     private val _currentLocale = MutableStateFlow(
