@@ -1,13 +1,13 @@
 package com.nanit.localization.importer
 
-import com.nanit.localization.LocalizationManager
+import com.nanit.localization.LocalizationDatabaseManager
 import com.nanit.localization.model.PluralQuantity
 import kotlinx.serialization.json.Json
 
 /**
  * Imports localization data from JSON format into the database
  */
-class JsonLocalizationImporter(private val manager: LocalizationManager) {
+class JsonLocalizationImporter(private val manager: LocalizationDatabaseManager) {
 
     private val json = Json {
         ignoreUnknownKeys = true

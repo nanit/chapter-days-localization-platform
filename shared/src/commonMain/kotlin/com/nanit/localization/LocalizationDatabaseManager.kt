@@ -1,7 +1,7 @@
 package com.nanit.localization
 
-import com.nanit.localization.database.DatabaseDriverFactory
 import com.nanit.localization.database.LocalizationRepository
+import com.nanit.localization.database.SqlDriverProvider
 import com.nanit.localization.model.PluralQuantity
 import com.nanit.localization.model.StringResource
 
@@ -9,8 +9,8 @@ import com.nanit.localization.model.StringResource
  * Main facade for managing localization in a Compose Multiplatform application
  * Provides a unified API for storing and retrieving localized strings
  */
-class LocalizationManager(databaseDriverFactory: DatabaseDriverFactory) {
-    private val repository = LocalizationRepository(databaseDriverFactory)
+class LocalizationDatabaseManager(sqlDriverProvider: SqlDriverProvider) {
+    private val repository = LocalizationRepository(sqlDriverProvider)
     private val stringLoader: StringLoader = DatabaseStringLoader(repository)
 
     // ==================== String Value Operations ====================

@@ -22,7 +22,7 @@ class LocalizationIntegrationTest {
     fun testCompleteLocalizationWorkflow() = runTest {
         // Create manager with in-memory database
         val driverFactory = createTestDatabaseDriverFactory()
-        val manager = LocalizationManager(driverFactory)
+        val manager = LocalizationDatabaseManager(driverFactory)
 
         // Create and run demo
         val demo = LocalizationTestDemo(manager)
@@ -38,7 +38,7 @@ class LocalizationIntegrationTest {
     @Test
     fun testStringValueQueries() = runTest {
         val driverFactory = createTestDatabaseDriverFactory()
-        val manager = LocalizationManager(driverFactory)
+        val manager = LocalizationDatabaseManager(driverFactory)
 
         // Store test data
         manager.storeString("test_key", "Test Value", "en")
@@ -58,7 +58,7 @@ class LocalizationIntegrationTest {
     @Test
     fun testStringArrayQueries() = runTest {
         val driverFactory = createTestDatabaseDriverFactory()
-        val manager = LocalizationManager(driverFactory)
+        val manager = LocalizationDatabaseManager(driverFactory)
 
         // Store test array
         val daysEn = listOf("Mon", "Tue", "Wed", "Thu", "Fri")
@@ -76,7 +76,7 @@ class LocalizationIntegrationTest {
     @Test
     fun testStringPluralQueries() = runTest {
         val driverFactory = createTestDatabaseDriverFactory()
-        val manager = LocalizationManager(driverFactory)
+        val manager = LocalizationDatabaseManager(driverFactory)
 
         // Store test plurals
         manager.storeStringPlural(
@@ -104,7 +104,7 @@ class LocalizationIntegrationTest {
     @Test
     fun testLocaleFallback() = runTest {
         val driverFactory = createTestDatabaseDriverFactory()
-        val manager = LocalizationManager(driverFactory)
+        val manager = LocalizationDatabaseManager(driverFactory)
 
         // Store only English
         manager.storeString("greeting", "Hello", "en")
@@ -122,7 +122,7 @@ class LocalizationIntegrationTest {
     @Test
     fun testMissingKey() = runTest {
         val driverFactory = createTestDatabaseDriverFactory()
-        val manager = LocalizationManager(driverFactory)
+        val manager = LocalizationDatabaseManager(driverFactory)
 
         val env = LocalizationEnvironment(locale = "en")
 
@@ -138,7 +138,7 @@ class LocalizationIntegrationTest {
     @Test
     fun testUpdateString() = runTest {
         val driverFactory = createTestDatabaseDriverFactory()
-        val manager = LocalizationManager(driverFactory)
+        val manager = LocalizationDatabaseManager(driverFactory)
 
         val env = LocalizationEnvironment(locale = "en")
 
@@ -156,7 +156,7 @@ class LocalizationIntegrationTest {
     @Test
     fun testDeleteString() = runTest {
         val driverFactory = createTestDatabaseDriverFactory()
-        val manager = LocalizationManager(driverFactory)
+        val manager = LocalizationDatabaseManager(driverFactory)
 
         val env = LocalizationEnvironment(locale = "en")
 

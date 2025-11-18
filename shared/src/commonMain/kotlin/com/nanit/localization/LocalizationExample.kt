@@ -1,6 +1,6 @@
 package com.nanit.localization
 
-import com.nanit.localization.database.DatabaseDriverFactory
+import com.nanit.localization.database.SqlDriverProvider
 import com.nanit.localization.model.PluralQuantity
 
 /**
@@ -14,19 +14,19 @@ object LocalizationExample {
      * Initialize the localization manager
      *
      * Platform-specific initialization:
-     * - Android: LocalizationManager(DatabaseDriverFactory(context))
-     * - iOS: LocalizationManager(DatabaseDriverFactory())
-     * - JVM: LocalizationManager(DatabaseDriverFactory())
-     * - JS/Wasm: LocalizationManager(DatabaseDriverFactory())
+     * - Android: LocalizationDatabaseManager(AndroidSqlDriverProvider(context))
+     * - iOS: LocalizationDatabaseManager(IosSqlDriverProvider())
+     * - JVM: LocalizationDatabaseManager(JvmSqlDriverProvider())
+     * - JS: LocalizationDatabaseManager(JsSqlDriverProvider())
      */
-    fun createManager(driverFactory: DatabaseDriverFactory): LocalizationManager {
-        return LocalizationManager(driverFactory)
+    fun createManager(sqlDriverProvider: SqlDriverProvider): LocalizationDatabaseManager {
+        return LocalizationDatabaseManager(sqlDriverProvider)
     }
 
     /**
      * Example: Store and load simple string values
      */
-    suspend fun exampleStringValues(manager: LocalizationManager) {
+    suspend fun exampleStringValues(manager: LocalizationDatabaseManager) {
         // Store strings in different locales
         manager.storeString(
             key = "app_name",
@@ -54,7 +54,7 @@ object LocalizationExample {
     /**
      * Example: Store and load string arrays
      */
-    suspend fun exampleStringArrays(manager: LocalizationManager) {
+    suspend fun exampleStringArrays(manager: LocalizationDatabaseManager) {
         // Store a string array
         manager.storeStringArray(
             key = "days_of_week",
@@ -77,7 +77,7 @@ object LocalizationExample {
     /**
      * Example: Store and load plurals
      */
-    suspend fun exampleStringPlurals(manager: LocalizationManager) {
+    suspend fun exampleStringPlurals(manager: LocalizationDatabaseManager) {
         // Store plural forms
         manager.storeStringPlural(
             key = "items_count",

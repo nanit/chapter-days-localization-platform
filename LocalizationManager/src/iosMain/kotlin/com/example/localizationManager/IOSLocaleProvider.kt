@@ -1,5 +1,6 @@
 package com.example.localizationManager
 
+import com.nanit.localization.database.IosSqlDriverProvider
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -29,6 +30,11 @@ class IOSLocaleProvider: LocaleProvider {
 public object NanitLocalizationOS {
     fun initialize() {
         val localeProvider = IOSLocaleProvider()
-        NanitLocalization.initialize(LocalizationManagerConfig(localeProvider))
+        NanitLocalization.initialize(
+            LocalizationManagerConfig(
+                localeProvider = localeProvider,
+                sqlDriverProvider = IosSqlDriverProvider()
+            )
+        )
     }
 }

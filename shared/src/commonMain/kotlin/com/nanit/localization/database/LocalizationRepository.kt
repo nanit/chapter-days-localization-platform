@@ -13,8 +13,8 @@ import kotlinx.coroutines.withContext
 /**
  * Repository for managing localization string resources in the database
  */
-class LocalizationRepository(databaseDriverFactory: DatabaseDriverFactory) {
-    private val database = LocalizationDatabase(databaseDriverFactory.createDriver())
+class LocalizationRepository(sqlDriverProvider: SqlDriverProvider) {
+    private val database = LocalizationDatabase(sqlDriverProvider.createDriver())
     private val queries = database.localizationDatabaseQueries
 
     // ==================== String Value Operations ====================

@@ -327,7 +327,7 @@ class JsonImportExampleTest {
     fun testFullJsonExample() = runTest {
         // Setup: Create manager and importer
         val driverFactory = createTestDatabaseDriverFactory()
-        val manager = LocalizationManager(driverFactory)
+        val manager = LocalizationDatabaseManager(driverFactory)
         val importer = JsonLocalizationImporter(manager)
 
         println("\n" + "=".repeat(80))
@@ -540,7 +540,7 @@ class JsonImportExampleTest {
     @Test
     fun testMultipleLocalesImport() = runTest {
         val driverFactory = createTestDatabaseDriverFactory()
-        val manager = LocalizationManager(driverFactory)
+        val manager = LocalizationDatabaseManager(driverFactory)
         val importer = JsonLocalizationImporter(manager)
 
         println("\n" + "=".repeat(80))

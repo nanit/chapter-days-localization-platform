@@ -1,7 +1,7 @@
 package com.nanit.localization.testing
 
 import com.nanit.localization.LocalizationEnvironment
-import com.nanit.localization.LocalizationManager
+import com.nanit.localization.LocalizationDatabaseManager
 import com.nanit.localization.importer.JsonLocalizationImporter
 
 /**
@@ -13,7 +13,7 @@ import com.nanit.localization.importer.JsonLocalizationImporter
  * 3. Fallback mechanisms
  * 4. All three resource types (Values, Arrays, Plurals)
  */
-class LocalizationTestDemo(private val manager: LocalizationManager) {
+class LocalizationTestDemo(private val manager: LocalizationDatabaseManager) {
 
     private val importer = JsonLocalizationImporter(manager)
 
