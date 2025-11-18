@@ -1,4 +1,4 @@
-package com.nanit.localization.server.data.repository
+package com.nanit.localization.server.data
 
 internal val enJsonMock: String = """
     {

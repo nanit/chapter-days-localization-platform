@@ -4,12 +4,14 @@ import arrow.core.Either
 import arrow.core.raise.catch
 import arrow.core.raise.either
 import com.nanit.localization.server.data.database.LocalizationDatabaseQueries
-import com.nanit.localization.server.data.importer.LocalizationJson
+import com.nanit.localization.server.data.enJsonMock
+import com.nanit.localization.server.data.esJsonMock
+import com.nanit.localization.server.data.frJsonMock
+import com.nanit.localization.server.data.model.LocalizationJson
 import com.nanit.localization.server.domain.repository.MockDataRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
-import java.io.File
 
 class MockDataRepositoryImpl(
     private val queries: LocalizationDatabaseQueries
@@ -20,16 +22,9 @@ class MockDataRepositoryImpl(
     }
 
     override suspend fun fillWithMock(): Either<Throwable, Unit> = either {
-        val process: (String) -> Either<Throwable, Unit> = { fileName ->
-//            val content: String = catch(
-//                block = {
-//                    val f = File("server/data/src/commonMain/resources/localizations/$fileName").readText()
-//                    f
-//                },
-//                catch = ::raise
-//            )
+        val process: (String) -> Either<Throwable, Unit> = { jsonStr ->
             val enLoc: LocalizationJson = catch(
-                block = { json.decodeFromString<LocalizationJson>(fileName) },
+                block = { json.decodeFromString<LocalizationJson>(jsonStr) },
                 catch = ::raise
             )
 

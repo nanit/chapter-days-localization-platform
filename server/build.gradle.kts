@@ -15,7 +15,6 @@ application {
 }
 
 dependencies {
-//    implementation(projects.server.data)
     implementation(projects.server.domain)
     implementation(projects.server.di)
 

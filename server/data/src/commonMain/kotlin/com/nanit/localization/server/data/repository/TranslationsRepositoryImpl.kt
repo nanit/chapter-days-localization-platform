@@ -1,6 +1,8 @@
-package com.nanit.localization.server.data.database
+package com.nanit.localization.server.data.repository
 
 import arrow.core.Either
+import com.nanit.localization.server.data.database.LocalizationDatabaseQueries
+import com.nanit.localization.server.data.database.StringValue
 import com.nanit.localization.server.domain.model.IncomingTranslation
 import com.nanit.localization.server.domain.model.PluralQuantity
 import com.nanit.localization.server.domain.model.StringResource
@@ -13,7 +15,7 @@ import kotlinx.datetime.Clock
 /**
  * Repository for managing localization string resources in the database
  */
-class LocalizationRepositoryV2(
+class TranslationsRepositoryImpl(
     private val queries: LocalizationDatabaseQueries
 ) : TranslationsRepository {
 
@@ -234,9 +236,9 @@ class LocalizationRepositoryV2(
     }
 }
 
-fun List<StringValue>.asModel(): List<StringResource.Value> = map(StringValue::asModel)
+internal fun List<StringValue>.asModel(): List<StringResource.Value> = map(StringValue::asModel)
 
-fun StringValue.asModel(): StringResource.Value = StringResource.Value(
+internal fun StringValue.asModel(): StringResource.Value = StringResource.Value(
     key = key,
     value = value_,
     locale = locale,

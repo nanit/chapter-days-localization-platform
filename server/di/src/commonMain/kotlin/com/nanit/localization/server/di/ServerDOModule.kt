@@ -3,7 +3,7 @@ package com.nanit.localization.server.di
 import com.nanit.localization.server.data.database.DatabaseDriverFactory
 import com.nanit.localization.server.data.database.LocalizationDatabase
 import com.nanit.localization.server.data.database.LocalizationDatabaseQueries
-import com.nanit.localization.server.data.database.LocalizationRepositoryV2
+import com.nanit.localization.server.data.repository.TranslationsRepositoryImpl
 import com.nanit.localization.server.data.repository.MockDataRepositoryImpl
 import com.nanit.localization.server.domain.repository.MockDataRepository
 import com.nanit.localization.server.domain.repository.TranslationsRepository
@@ -23,6 +23,6 @@ val ServerDOModule: Module = module {
 
     factoryOf(LocalizationDatabase::localizationDatabaseQueries) bind LocalizationDatabaseQueries::class
 
-    singleOf(::LocalizationRepositoryV2) bind TranslationsRepository::class
+    singleOf(::TranslationsRepositoryImpl) bind TranslationsRepository::class
     singleOf(::MockDataRepositoryImpl) bind MockDataRepository::class
 }
