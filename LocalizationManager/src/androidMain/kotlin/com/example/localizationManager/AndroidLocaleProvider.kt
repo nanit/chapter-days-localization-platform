@@ -1,14 +1,11 @@
-package com.nanit.localizationManager
+package com.example.localizationManager
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
-import com.example.localizationManager.LocaleInfo
-import com.example.localizationManager.LocaleProvider
-import com.example.localizationManager.LocalizationManagerConfig
-import com.example.localizationManager.NanitLocalization
+import com.nanit.localization.database.AndroidSqlDriverProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -59,6 +56,7 @@ object NanitLocalizationAndroid {
         NanitLocalization.initialize(
             LocalizationManagerConfig(
                 localeProvider = localeProvider,
+                sqlDriverProvider = AndroidSqlDriverProvider(context.applicationContext)
             )
         )
     }

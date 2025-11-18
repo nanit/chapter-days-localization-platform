@@ -1,6 +1,8 @@
 package com.example.localizationManager
 
+import app.cash.sqldelight.db.SqlDriver
 import com.example.localizationManager.api.FakeLocalizationApiClient
+import com.nanit.localization.database.SqlDriverProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -8,6 +10,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
  * Example usage of LocalizationManager with FakeLocalizationApiClient.
  * This can be used for manual testing and development.
  */
+
+/**
+ * Fake SqlDriverProvider for testing/examples without actual database
+ */
+class FakeSqlDriverProvider : SqlDriverProvider {
+    override fun createDriver(): SqlDriver {
+        throw UnsupportedOperationException("Fake driver - not meant for actual use. Use platform-specific driver provider.")
+    }
+}
 
 /**
  * Simple LocaleProvider implementation for testing.
@@ -72,6 +83,7 @@ fun createFakeLocalizationManager(
 
     val config = LocalizationManagerConfig(
         localeProvider = localeProvider,
+        sqlDriverProvider = FakeSqlDriverProvider(),
         cacheSize = 1_000
     )
 

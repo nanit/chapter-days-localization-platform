@@ -1,7 +1,7 @@
 package com.nanit.localization
 
 import android.app.Application
-import com.nanit.localizationManager.NanitLocalizationAndroid
+import com.example.localizationManager.NanitLocalizationAndroid
 
 class MyApplication : Application() {
 

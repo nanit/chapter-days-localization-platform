@@ -10,6 +10,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.localizationManager.api.FakeLocalizationApiClient
 import com.example.localizationManager.api.LocalizationApiClient
+import com.nanit.localization.LocalizationDatabaseManager
+//import com.nanit.localization.database.DatabaseDriverFactory
+import com.nanit.localization.model.StringResource
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +31,7 @@ import kotlinx.coroutines.launch
 
 class LocalizationManager(
     val config: LocalizationManagerConfig,
-    private val apiClient: LocalizationApiClient? = FakeLocalizationApiClient() // TODO: REMOVE
+    private val apiClient: LocalizationApiClient? = FakeLocalizationApiClient() // TODO: REMOVE,
 ) {
 
     private val coroutineScope by lazy { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
@@ -58,6 +61,8 @@ class LocalizationManager(
     val currentLocale: StateFlow<LocaleInfo> = _currentLocale.asStateFlow()
 
     private val refreshCallbacks = mutableMapOf<String, () -> Unit>()
+
+    val dbManager = LocalizationDatabaseManager(config.sqlDriverProvider)
 
     fun initialize() {
         // Start observing locale changes
