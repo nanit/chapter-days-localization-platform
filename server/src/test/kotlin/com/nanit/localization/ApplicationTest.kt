@@ -1,5 +1,6 @@
 package com.nanit.localization
 
+import com.nanit.localization.server.data.Greeting
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*

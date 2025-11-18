@@ -7,6 +7,9 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.ktor)
+    id("org.jetbrains.kotlinx.atomicfu") version "0.27.0"
 }
 
 kotlin {
@@ -41,8 +44,21 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.ktor.cio)
         }
         commonMain.dependencies {
+            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.1")
+            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+            implementation(project.dependencies.platform(libs.arrow.bom))
+            implementation(libs.arrow.cache4k)
+
+            // Ktor client dependencies
+            implementation(libs.ktor.core)
+            implementation(libs.ktor.cio)
+            implementation(libs.ktor.contentNegotiation)
+            implementation(libs.ktor.jsonSerialization)
+            implementation(libs.ktor.logging)
+
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -52,6 +68,12 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
+        }
+        jsMain.dependencies {
+            implementation(libs.ktor.js)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.js)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
