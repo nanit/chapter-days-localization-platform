@@ -8,21 +8,23 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.example.localizationManager.api.ApiConfig
 import com.example.localizationManager.api.FakeLocalizationApiClient
-import com.example.localizationManager.api.KtorLocalizationApiClient
 import com.example.localizationManager.api.LocalizationApiClient
 import io.github.reactivecircus.cache4k.Cache
-import io.github.reactivecircus.cache4k.CacheEvent
-import io.github.reactivecircus.cache4k.CacheEventListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+
+// TODO TASKS:
+// - Add a worker job to fetch the string every day.
+// - Somehow to populate the initial value on the database on build
 
 class LocalizationManager(
     val config: LocalizationManagerConfig,
@@ -126,6 +128,18 @@ class LocalizationManager(
 //            config.storage.getString(currentLocale.value.languageCode, key)
 //                ?: key // Return key as fallback
             key
+        }
+    }
+
+    fun observeString(key: String): Flow<String> = flow {
+        // Emit initial value
+        emit(cache.get(key) ?: key)
+
+        // Observe locale changes
+        currentLocale.collect { locale ->
+            // Re-fetch from cache when locale changes
+            val value = getString(key)
+            emit(value)
         }
     }
 
