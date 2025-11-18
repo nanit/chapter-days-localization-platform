@@ -22,6 +22,18 @@ import nanitlocalization.composeapp.generated.resources.compose_multiplatform
 @Composable
 @Preview
 fun App() {
+    // Option 1: Test with FAKE data (includes manual locale selector)
+//    LocalizationTestWithFakeData()
+
+    // Option 2: Test with REAL data (requires NanitLocalizationAndroid.initialize in MainActivity)
+     LocalizationTestWithRealData()
+
+    // Original demo app (commented out)
+    // OriginalDemoApp()
+}
+
+@Composable
+fun OriginalDemoApp() {
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
         Column(

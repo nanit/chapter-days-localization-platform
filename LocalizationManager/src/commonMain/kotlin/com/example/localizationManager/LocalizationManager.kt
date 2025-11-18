@@ -1,6 +1,15 @@
 package com.example.localizationManager
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.example.localizationManager.api.ApiConfig
+import com.example.localizationManager.api.FakeLocalizationApiClient
 import com.example.localizationManager.api.KtorLocalizationApiClient
 import com.example.localizationManager.api.LocalizationApiClient
 import io.github.reactivecircus.cache4k.Cache
@@ -15,16 +24,21 @@ import kotlinx.coroutines.launch
 
 class LocalizationManager(
     val config: LocalizationManagerConfig,
+    private val apiClient: LocalizationApiClient? = FakeLocalizationApiClient() // TODO: REMOVE
 ) {
 
     private val coroutineScope by lazy { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
 
     // Create API client internally - hidden from platform code
-    private val apiClient: LocalizationApiClient by lazy {
-        val apiConfig = ApiConfig(
-            baseUrl = "base url",
-        )
-        KtorLocalizationApiClient(apiConfig)
+    // Use provided apiClient if available, otherwise create default Ktor client
+    private val localizationApiClient: LocalizationApiClient by lazy {
+//        apiClient ?: run {
+//            val apiConfig = ApiConfig(
+//                baseUrl = "base url",
+//            )
+//            KtorLocalizationApiClient(apiConfig)
+//        }
+        FakeLocalizationApiClient()
     }
 
     private val cache = Cache.Builder<String, String>()
@@ -37,7 +51,6 @@ class LocalizationManager(
     val currentLocale: StateFlow<LocaleInfo> = _currentLocale.asStateFlow()
 
     private val refreshCallbacks = mutableMapOf<String, () -> Unit>()
-
 
     fun initialize() {
         // Start observing locale changes
@@ -54,7 +67,6 @@ class LocalizationManager(
         coroutineScope.launch {
             loadStringsForCurrentLocale()
         }
-
     }
 
     private suspend fun handleLocaleChange(newLocale: LocaleInfo) {
@@ -89,7 +101,7 @@ class LocalizationManager(
 
     private suspend fun fetchAndCacheStrings() {
         try {
-            val strings = apiClient.fetchStrings(currentLocale.value.languageCode)
+            val strings = localizationApiClient.fetchStrings(currentLocale.value.languageCode)
 
             // Save to storage
 //            config.storage.saveStrings(currentLocale.value.languageCode, strings)
@@ -112,30 +124,30 @@ class LocalizationManager(
         }
     }
 
-//    @Composable
-//    fun stringResource(key: String): String {
-//        val locale by currentLocale.collectAsState()
-//        var refreshTrigger by remember { mutableIntStateOf(0) }
-//
-//        DisposableEffect(key) {
-//            val callback = { refreshTrigger++ }
-//            refreshCallbacks[key] = callback
-//
-//            onDispose {
-//                refreshCallbacks.remove(key)
-//            }
-//        }
-//
-//        val value by produceState(
-//            initialValue = key,
-//            key1 = key,
-//            key2 = locale,
-//            key3 = refreshTrigger
-//        ) {
-//            value = getString(key)
-//        }
-//
-//        return value
-//    }
+    @Composable
+    fun stringResource(key: String): String {
+        val locale by currentLocale.collectAsState()
+        var refreshTrigger by remember { mutableIntStateOf(0) }
+
+        DisposableEffect(key) {
+            val callback: () -> Unit = { refreshTrigger++ }
+            refreshCallbacks[key] = callback
+
+            onDispose {
+                refreshCallbacks.remove(key)
+            }
+        }
+
+        val value by produceState(
+            initialValue = key,
+            key1 = key,
+            key2 = locale,
+            key3 = refreshTrigger
+        ) {
+            value = getString(key)
+        }
+
+        return value
+    }
 
 }
